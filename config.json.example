@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "golang-api-template",
+    "debug": true,
+    "host": "127.0.0.1:5001",
+    "secret": "cd031f8f87498defcf1ed2a5f59408909275fda36aefdcfb3901cb1dac645840"
+  },
+  "database": {
+    "mongodb": {
+      "host": "127.0.0.1",
+       "database": "db_test",
+       "user": "root",
+       "password": "",
+       "port": 27071
+    }
+  }
+}

@@ -1,0 +1,15 @@
+### Ping
+GET http://localhost:5000/ping
+content-type: application/json
+
+###################################### USER ###########################################
+### USER - API CREATE USER
+POST http://localhost:5001/api/v1/users
+content-type: application/json
+
+{
+    "name": "Jane",
+    "email": "johndoegmail.com",
+    "age": 20,
+    "gender": "Man"
+}
