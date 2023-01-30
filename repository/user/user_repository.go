@@ -115,3 +115,36 @@ func (repo *userRepository) FindAllUser(limit int, page int, filterText string, 
 
 	return users, totalRecord, nil
 }
+
+func (repo *userRepository) UpdateUser(input entity.User) error {
+	var err error
+
+	ds := repo.dbSession.Copy()
+	defer ds.Close()
+	table := ds.DB(repo.database).C(collectionUser)
+
+	err = table.Update(
+		bson.M{"_id": bson.ObjectIdHex(input.ID.Hex())},
+		bson.M{"$set": bson.M{
+			"name":       input.Name,
+			"email":      input.Email,
+			"username":   input.Username,
+			"age":        input.Age,
+			"password":   input.Password,
+			"gender":     input.Gender,
+			"updated_at": input.UpdatedAt,
+		}},
+	)
+	return err
+}
+
+func (repo *userRepository) FindUserById(userId string) (entity.User, error) {
+	ds := repo.dbSession.Copy()
+	defer ds.Close()
+	table := ds.DB(repo.database).C(collectionUser)
+
+	objResult := entity.User{}
+	err := table.Find(bson.M{"_id": bson.ObjectIdHex(userId)}).One(&objResult)
+
+	return objResult, err
+}

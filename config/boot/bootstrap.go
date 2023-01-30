@@ -64,6 +64,8 @@ func (h *HTTPHandler) RegisterAPIHandler() *HTTPHandler {
 
 	group.POST("/users", userHandler.CreateUser)
 	group.GET("/users", userHandler.GetUser)
+	group.GET("/users/:user_id", userHandler.DetailUser)
+	group.PUT("/users/:user_id", userHandler.UpdateUser)
 
 	return h
 }

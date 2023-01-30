@@ -83,7 +83,7 @@ func (_h *UserApiHandler) GetUser(c echo.Context) error {
 	limit, page = defaultValue.SetDafaultValuePagination(limitStr, pageStr)
 
 	// get data user
-	users, totalRecord, err := _h.UserRepo.FindAllUser(page, limit, filterText, keyword)
+	users, totalRecord, err := _h.UserRepo.FindAllUser(limit, page, filterText, keyword)
 	if err != nil {
 		return _h.Helper.SendBadRequest(c, err.Error(), _h.Helper.EmptyJsonMap())
 	}
@@ -106,4 +106,63 @@ func (_h *UserApiHandler) GetUser(c echo.Context) error {
 	}
 
 	return _h.Helper.SendSuccess(c, "Success", responseObj)
+}
+
+// update user
+func (_h *UserApiHandler) UpdateUser(c echo.Context) error {
+	var err error
+	var input request.UserRequest
+
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+	now := time.Now().In(loc)
+	userId := c.Param("user_id")
+
+	if err = c.Bind(&input); err != nil {
+		return _h.Helper.SendBadRequest(c, err.Error(), _h.Helper.EmptyJsonMap())
+	}
+
+	//  for validate struct request input
+	if err := validator.New().Struct(input); err != nil {
+		return _h.Helper.SendBadRequest(c, err.Error(), _h.Helper.EmptyJsonMap())
+	}
+
+	// for check input custom validation
+	if err := input.CustomValidate(); err != nil {
+		return _h.Helper.SendBadRequest(c, err.Error(), _h.Helper.EmptyJsonMap())
+	}
+
+	user, _ := _h.UserRepo.FindUserById(userId)
+	if user.ID == "" {
+		return _h.Helper.SendNotFoundError(c, "User not found", _h.Helper.EmptyJsonMap())
+	}
+
+	// set mapping value input to entity objects
+	err = helper.Automapper(input, &user)
+	if err != nil {
+		return _h.Helper.SendBadRequest(c, err.Error(), _h.Helper.EmptyJsonMap())
+	}
+
+	// set value objs needed
+	user.UpdatedAt = now
+
+	// cleaning data objs
+	user = user.DataCleaning()
+
+	err = _h.UserRepo.UpdateUser(user)
+	if err != nil {
+		return _h.Helper.SendBadRequest(c, "failed to update user", err)
+	}
+
+	return _h.Helper.SendSuccess(c, "Success", _h.Helper.EmptyJsonMap())
+}
+
+func (_h *UserApiHandler) DetailUser(c echo.Context) error {
+	userId := c.Param("user_id")
+
+	user, _ := _h.UserRepo.FindUserById(userId)
+	if user.ID == "" {
+		return _h.Helper.SendNotFoundError(c, "User not found", _h.Helper.EmptyJsonMap())
+	}
+
+	return _h.Helper.SendSuccess(c, "Success", user)
 }

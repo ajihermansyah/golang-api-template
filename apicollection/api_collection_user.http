@@ -17,5 +17,22 @@ content-type: application/json
 }
 
 ### USER - API GET LIST OF USER
-GET http://localhost:5001/api/v1/users?filter_text=budi@gmail.com&keywords=email&page=1&limit=10
+GET http://localhost:5001/api/v1/users?page=1&limit=10
+content-type: application/json
+
+### USER - API UPDATE USER
+PUT http://localhost:5001/api/v1/users/63d5f444d9d82932b74a3980
+content-type: application/json
+
+{
+    "name": "test update user",
+    "username":"Anang",
+    "Password": "11122233",
+    "email": "anang@gmail.com",
+    "age": 21,
+    "gender": "Men"
+}
+
+### USER - API GET DETAIL USER
+GET http://localhost:5001/api/v1/users/63d5f444d9d82932b74a3980
 content-type: application/json

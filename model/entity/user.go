@@ -23,6 +23,7 @@ func (user User) DataCleaning() User {
 	user.Username = strings.ToLower(user.Username)
 	user.Password = strings.ToLower(user.Password)
 	user.Email = strings.ToLower(user.Email)
+	user.Gender = strings.ToLower(user.Gender)
 
 	return user
 }
