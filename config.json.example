@@ -11,7 +11,7 @@
        "database": "db_test",
        "user": "root",
        "password": "",
-       "port": 27071
+       "port": 27017
     }
   }
 }

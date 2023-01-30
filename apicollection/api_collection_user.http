@@ -8,8 +8,14 @@ POST http://localhost:5001/api/v1/users
 content-type: application/json
 
 {
-    "name": "Jane",
-    "email": "johndoegmail.com",
-    "age": 20,
+    "name": "Buudi",
+    "username":"budi",
+    "Password": "1233",
+    "email": "budi@gmail.com",
+    "age": 21,
     "gender": "Man"
 }
+
+### USER - API GET LIST OF USER
+GET http://localhost:5001/api/v1/users?filter_text=budi@gmail.com&keywords=email&page=1&limit=10
+content-type: application/json

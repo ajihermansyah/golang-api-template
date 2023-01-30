@@ -63,6 +63,7 @@ func (h *HTTPHandler) RegisterAPIHandler() *HTTPHandler {
 	router.GET("/ping", apiHandler.PingHandler)
 
 	group.POST("/users", userHandler.CreateUser)
+	group.GET("/users", userHandler.GetUser)
 
 	return h
 }

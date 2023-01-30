@@ -1,8 +1,11 @@
 package user
 
 import (
+	"fmt"
 	"golang-api-template/model/entity"
 	"golang-api-template/repository"
+
+	"gopkg.in/mgo.v2/bson"
 
 	"gopkg.in/mgo.v2"
 )
@@ -41,4 +44,74 @@ func (repo *userRepository) CreateUser(user entity.User) error {
 		return err
 	}
 	return err
+}
+
+func (repo *userRepository) FindAllUser(limit int, page int, filterText string, keyword string) ([]entity.User, int, error) {
+	var (
+		err           error
+		users         = make([]entity.User, 0)
+		offset        = (page - 1) * limit
+		totalRecord   int
+		sortBy        = bson.M{"$sort": bson.M{"created_at": -1}}
+		filterKeyword = bson.M{}
+		pipeline      = []bson.M{}
+	)
+
+	// filtering
+	if filterText != "" {
+		if keyword == "email" {
+			filterKeyword = bson.M{"email": bson.M{"$regex": filterText, "$options": "i"}}
+		} else if keyword == "name" {
+			filterKeyword = bson.M{"name": bson.M{"$regex": filterText, "$options": "i"}}
+		} else if keyword == "username" {
+			filterKeyword = bson.M{"username": bson.M{"$regex": filterText, "$options": "i"}}
+		}
+	}
+
+	pipeline = []bson.M{
+		{"$match": bson.M{
+			"$and": []bson.M{
+				filterKeyword,
+			},
+		}},
+		sortBy,
+		{"$skip": offset},
+		{"$limit": limit},
+	}
+
+	fmt.Println(pipeline)
+
+	pipelineCount := bson.M{
+		"$and": []bson.M{
+			filterKeyword,
+		},
+	}
+
+	ds := repo.dbSession.Copy()
+	defer ds.Close()
+	table := ds.DB(repo.database).C(collectionUser)
+
+	//indexing
+	index := mgo.Index{Key: []string{"created_at"}}
+	_ = table.EnsureIndex(index)
+
+	index = mgo.Index{Key: []string{"email"}}
+	_ = table.EnsureIndex(index)
+
+	index = mgo.Index{Key: []string{"name"}}
+	_ = table.EnsureIndex(index)
+
+	index = mgo.Index{Key: []string{"username"}}
+	_ = table.EnsureIndex(index)
+
+	pipe := table.Pipe(pipeline)
+	if err = pipe.All(&users); err != nil {
+		return nil, 0, err
+	}
+
+	totalRecord, err = table.Find(pipelineCount).Count()
+
+	fmt.Println(&users, totalRecord)
+
+	return users, totalRecord, nil
 }
