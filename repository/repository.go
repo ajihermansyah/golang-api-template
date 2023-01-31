@@ -9,4 +9,5 @@ type UserRepositoryInterface interface {
 	FindAllUser(page int, limit int, filterText, keyword string) ([]entity.User, int, error)
 	UpdateUser(input entity.User) error
 	FindUserById(userId string) (entity.User, error)
+	DeleteUserByID(userId string) error
 }

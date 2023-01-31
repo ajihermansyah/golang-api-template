@@ -36,3 +36,8 @@ content-type: application/json
 ### USER - API GET DETAIL USER
 GET http://localhost:5001/api/v1/users/63d5f444d9d82932b74a3980
 content-type: application/json
+
+
+### USER - API DELETE USER
+DELETE http://localhost:5001/api/v1/users/63d8d07ed9d82932b74a5ea4
+content-type: application/json

@@ -148,3 +148,20 @@ func (repo *userRepository) FindUserById(userId string) (entity.User, error) {
 
 	return objResult, err
 }
+
+func (repo *userRepository) DeleteUserByID(userId string) error {
+
+	var err error
+
+	ds := repo.dbSession.Copy()
+	defer ds.Close()
+	table := ds.DB(repo.database).C(collectionUser)
+
+	err = table.Remove(bson.M{"_id": bson.ObjectIdHex(userId)})
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}

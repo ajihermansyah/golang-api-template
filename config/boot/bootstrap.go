@@ -62,10 +62,11 @@ func (h *HTTPHandler) RegisterAPIHandler() *HTTPHandler {
 	//ping
 	router.GET("/ping", apiHandler.PingHandler)
 
-	group.POST("/users", userHandler.CreateUser)
-	group.GET("/users", userHandler.GetUser)
-	group.GET("/users/:user_id", userHandler.DetailUser)
-	group.PUT("/users/:user_id", userHandler.UpdateUser)
+	group.POST("/users", userHandler.CreateUserHandler)
+	group.GET("/users", userHandler.GetUserHandler)
+	group.GET("/users/:user_id", userHandler.DetailUserHandler)
+	group.PUT("/users/:user_id", userHandler.UpdateUserHandler)
+	group.DELETE("/users/:user_id", userHandler.DeleteUserHandler)
 
 	return h
 }

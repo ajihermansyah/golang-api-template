@@ -22,8 +22,8 @@ type UserApiHandler struct {
 	UserRepo repository.UserRepositoryInterface
 }
 
-// create user
-func (_h *UserApiHandler) CreateUser(c echo.Context) error {
+// create user handler
+func (_h *UserApiHandler) CreateUserHandler(c echo.Context) error {
 	var (
 		err     error
 		input   request.UserRequest
@@ -67,8 +67,8 @@ func (_h *UserApiHandler) CreateUser(c echo.Context) error {
 	return _h.Helper.SendSuccess(c, "Success", _h.Helper.EmptyJsonMap())
 }
 
-// get user
-func (_h *UserApiHandler) GetUser(c echo.Context) error {
+// get user handler
+func (_h *UserApiHandler) GetUserHandler(c echo.Context) error {
 	var (
 		err         error
 		limit, page int
@@ -108,8 +108,8 @@ func (_h *UserApiHandler) GetUser(c echo.Context) error {
 	return _h.Helper.SendSuccess(c, "Success", responseObj)
 }
 
-// update user
-func (_h *UserApiHandler) UpdateUser(c echo.Context) error {
+// update user handler
+func (_h *UserApiHandler) UpdateUserHandler(c echo.Context) error {
 	var err error
 	var input request.UserRequest
 
@@ -156,7 +156,8 @@ func (_h *UserApiHandler) UpdateUser(c echo.Context) error {
 	return _h.Helper.SendSuccess(c, "Success", _h.Helper.EmptyJsonMap())
 }
 
-func (_h *UserApiHandler) DetailUser(c echo.Context) error {
+// get detail user handler
+func (_h *UserApiHandler) DetailUserHandler(c echo.Context) error {
 	userId := c.Param("user_id")
 
 	user, _ := _h.UserRepo.FindUserById(userId)
@@ -165,4 +166,24 @@ func (_h *UserApiHandler) DetailUser(c echo.Context) error {
 	}
 
 	return _h.Helper.SendSuccess(c, "Success", user)
+}
+
+// delete user handler
+func (_h *UserApiHandler) DeleteUserHandler(c echo.Context) error {
+	var err error
+
+	userId := c.Param("user_id")
+
+	// check user data
+	user, _ := _h.UserRepo.FindUserById(userId)
+	if user.ID == "" {
+		return _h.Helper.SendNotFoundError(c, "User not found", _h.Helper.EmptyJsonMap())
+	}
+
+	err = _h.UserRepo.DeleteUserByID(userId)
+	if err != nil {
+		return _h.Helper.SendBadRequest(c, "failed to delete user", err)
+	}
+
+	return _h.Helper.SendSuccess(c, "Success", _h.Helper.EmptyJsonMap())
 }
